@@ -12,6 +12,8 @@ session = Session()
 user = User("edwin", "password")
 session.add(user)
 
+session.query(User.username == 'edwin')
+
 user = User("test", "anothertest")
 session.add(user)
 
