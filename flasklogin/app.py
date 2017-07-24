@@ -44,17 +44,19 @@ def register1():
         POST_PASSWORD = str(request.form['password'])
 
         Session = sessionmaker(bind=engine)
-        s = Session()
-        query = s.query(User).filter(User.username.in_([POST_USERNAME]), User.password.in_([POST_PASSWORD]))
+        s3 = Session()
+        query = s3.query(User).filter(User.username.in_([POST_USERNAME]), User.password.in_([POST_PASSWORD]))
         result = query.first()
         if result:
             flash('username already exists')
         else:
             user = User(str(request.form['username']), str(request.form['password']))
-            s.add(user)
-            s.commit
+            s3.add(user)
+            s3.commit()
+        return 'done'
     else:
         return render_template('register.html')
+
 
 @app.route('/logout')
 def logout():
