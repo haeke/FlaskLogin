@@ -42,18 +42,23 @@ def register1():
     if request.method == "POST":
         POST_USERNAME = str(request.form['username'])
         POST_PASSWORD = str(request.form['password'])
+        POST_CONFIRM = str(request.form['confirm'])
+        if POST_PASSWORD == POST_CONFIRM:
 
-        Session = sessionmaker(bind=engine)
-        s3 = Session()
-        query = s3.query(User).filter(User.username.in_([POST_USERNAME]), User.password.in_([POST_PASSWORD]))
-        result = query.first()
-        if result:
-            flash('username already exists')
+            Session = sessionmaker(bind=engine)
+            s3 = Session()
+            query = s3.query(User).filter(User.username.in_([POST_USERNAME]), User.password.in_([POST_PASSWORD]))
+            result = query.first()
+            if result:
+                flash('username already exists')
+            else:
+                user = User(str(request.form['username']), str(request.form['password']))
+                s3.add(user)
+                s3.commit()
+            return 'done'
+
         else:
-            user = User(str(request.form['username']), str(request.form['password']))
-            s3.add(user)
-            s3.commit()
-        return 'done'
+            return 'mismatched password'
     else:
         return render_template('register.html')
 
